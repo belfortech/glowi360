@@ -1,0 +1,227 @@
+/* ProductDetail.module.css - Custom Typography and Layout Styles */
+
+.heading {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 125%;
+  letter-spacing: -0.41px;
+  color: #0C0C0C;
+}
+
+.subHeading {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 125%;
+  letter-spacing: -0.41px;
+  color: #0C0C0C;
+}
+
+.bodyText {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 125%;
+  letter-spacing: -0.41px;
+  color: #6C7278;
+}
+
+.smallText {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 125%;
+  letter-spacing: -0.41px;
+  color: #6C7278;
+}
+
+.labelText {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 125%;
+  letter-spacing: -0.41px;
+  color: #6C7278;
+}
+
+.valueText {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 125%;
+  letter-spacing: -0.41px;
+  color: #0C0C0C;
+}
+
+/* Modern Card Layouts */
+.modernCard {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease-in-out;
+}
+
+.modernCard:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.infoSection {
+  background: #F9FAFB;
+  border-radius: 8px;
+  padding: 20px;
+  border: 1px solid #F3F4F6;
+}
+
+.infoItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.infoItem:last-child {
+  border-bottom: none;
+}
+
+.badgeContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.badge {
+  background: #EEF2FF;
+  color: #3730A3;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid #C7D2FE;
+}
+
+.iconCard {
+  background: #F0F9FF;
+  border: 1px solid #BAE6FD;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.2s ease-in-out;
+}
+
+.iconCard:hover {
+  background: #E0F2FE;
+  transform: translateY(-1px);
+}
+
+.reviewCard {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  transition: all 0.2s ease-in-out;
+}
+
+.reviewCard:hover {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.userAvatar {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.ratingStars {
+  display: flex;
+  gap: 2px;
+  margin: 4px 0;
+}
+
+.instructionsList {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.instructionItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.instructionItem:last-child {
+  margin-bottom: 0;
+}
+
+.bulletPoint {
+  color: #D4AF37;
+  font-weight: bold;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+/* Button Styles */
+.addToCartButton {
+  background-color: #D4AF37 !important;
+  border: none !important;
+  color: white !important;
+  flex: 0 0 auto;
+  width: 200px;
+}
+
+.addToCartButton:hover {
+  background-color: #C9A24D !important;
+}
+
+.addToCartButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .infoGrid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .heading {
+    font-size: 20px;
+  }
+  
+  .bodyText {
+    font-size: 18px;
+  }
+  
+  .modernCard {
+    padding: 16px;
+  }
+
+  .addToCartButton {
+    width: 100%;
+    flex: 1;
+  }
+}
