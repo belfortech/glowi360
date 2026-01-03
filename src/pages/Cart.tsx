@@ -10,6 +10,7 @@ import Button from '../components/common/Button';
 import Loading from '../components/common/Loading';
 import Toast from '../components/ui/Toast';
 import AuthModalManager from '../components/auth/AuthModalManager';
+import { getImageUrl } from '../config/api';
 
 interface LocalCartItemWithProduct {
   cart_item_id: string;
@@ -553,13 +554,7 @@ const Cart: React.FC = () => {
                     <div className="flex items-center gap-4">
                       {/* Product Image */}
                       <img
-                        src={item.product.image ? 
-                          (item.product.image.startsWith('http') ? 
-                            item.product.image : 
-                            `${process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000'}${item.product.image}`
-                          ) : 
-                          '/api/placeholder/80/80'
-                        }
+                        src={getImageUrl(item.product.image)}
                         alt={item.product.name}
                         className="w-20 h-20 rounded-lg object-cover cursor-pointer"
                         onClick={() => navigate(`/products/${item.product.product_id || (item as any).product_id}`)}

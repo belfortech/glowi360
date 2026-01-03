@@ -17,6 +17,18 @@ export interface Category {
   product_count: number;
 }
 
+export interface Brand {
+  brand_id: string;
+  name: string;
+  slug: string;
+  logo?: string;
+  description?: string;
+  category_ids?: string[]; // For correlation with categories
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 // Updated Product interface for DETAIL view (from /products/{id}/ endpoint)
 export interface Product {
   product_id: string;
@@ -154,7 +166,7 @@ export const parsePrice = (price: string | number): number => {
   return parseFloat(price) || 0;
 };
 
-// Helper function for converting rating strings to numbers  
+// Helper function for converting rating strings to numbers
 export const parseRating = (rating: string | number): number => {
   if (typeof rating === 'number') return rating;
   return parseFloat(rating) || 0;

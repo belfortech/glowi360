@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from '../../store';
 import { logout } from '../../store/slices/authSlice';
 import { useNavigate } from 'react-router-dom';
 import PersonalInfoSection from './PersonalInfoSection';
+import { API_BASE_URL } from '../../config/api';
 
 const ProfileManagement: React.FC = () => {
   const [activeSection, setActiveSection] = useState('personal-info');
@@ -13,9 +14,6 @@ const ProfileManagement: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { user } = useAppSelector((state) => state.auth);
-
-  // Configuration
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
 
   const getAuthToken = () => {
     return localStorage.getItem('access_token');
@@ -52,7 +50,7 @@ const ProfileManagement: React.FC = () => {
                 'Content-Type': 'application/json',
               },
             });
-            
+
             if (!retryResponse.ok && retryResponse.status !== 404) {
               throw new Error('Failed to access profile');
             }
@@ -145,7 +143,7 @@ const ProfileManagement: React.FC = () => {
           <div className="p-6">
             <div className="flex items-center gap-3 mb-6">
               <Settings className="w-6 h-6 text-[#D4AF37]" />
-              <h2 
+              <h2
                 className="text-lg font-medium"
                 style={{
                   fontFamily: 'Inter',
@@ -265,7 +263,7 @@ const LegalAccountSection: React.FC = () => {
     <div className="bg-white rounded-lg shadow-sm border p-8">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h3 
+          <h3
             className="text-xl font-medium mb-1"
             style={{
               fontFamily: 'Inter',
@@ -276,7 +274,7 @@ const LegalAccountSection: React.FC = () => {
           >
             Legal & Account
           </h3>
-          <p 
+          <p
             className="text-sm text-gray-500"
             style={{
               fontFamily: 'Inter',
@@ -332,7 +330,7 @@ const SecuritySection: React.FC = () => {
     <div className="bg-white rounded-lg shadow-sm border p-8">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h3 
+          <h3
             className="text-xl font-medium mb-1"
             style={{
               fontFamily: 'Inter',
@@ -343,7 +341,7 @@ const SecuritySection: React.FC = () => {
           >
             Security
           </h3>
-          <p 
+          <p
             className="text-sm text-gray-500"
             style={{
               fontFamily: 'Inter',
@@ -401,7 +399,7 @@ const SecuritySection: React.FC = () => {
                 <button className="px-4 py-2 bg-[#D4AF37] text-white rounded-lg hover:bg-[#C9A24D] transition-colors">
                   Update Password
                 </button>
-                <button 
+                <button
                   onClick={() => setShowChangePassword(false)}
                   className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
                 >

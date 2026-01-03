@@ -156,9 +156,9 @@ const Navbar: React.FC = () => {
               {/* Logo */}
               <Link to="/" className="flex-shrink-0 flex items-center group">
                 <img
-                  src="/Cha-Image-Dec-29.png"
+                  src="/GC360 Marginless.png"
                   alt="Glowcare360 Logo"
-                  className="h-14 w-auto max-w-[130px] transition-transform duration-300 group-hover:scale-105"
+                  className="w-[200px] h-auto transition-transform duration-300 group-hover:scale-105"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.style.display = 'none';

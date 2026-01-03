@@ -1,6 +1,10 @@
 // src/config/brands.ts
-// Shared brand configuration for OurPartners and ProductFilters
+// Dynamic brand configuration fetched from API with category correlation
 
+import { useBrands, useCategories } from '../hooks/api';
+import { Brand as ApiBrand } from '../types/api';
+
+// Legacy interface for backward compatibility
 export interface Brand {
   id: string;
   name: string;
@@ -11,27 +15,58 @@ export interface Brand {
   slug: string;
   // Keywords to match products to this brand
   keywords: string[];
+  // Category correlation
+  categories?: string[];
 }
 
+// Hook to get dynamic brands with category correlation
+export const useDynamicBrands = () => {
+  const { data: brandsData = [], isLoading: brandsLoading } = useBrands();
+  const { data: categoriesData = [], isLoading: categoriesLoading } = useCategories();
+
+  // Transform API brands to legacy format with category correlation
+  const brands: Brand[] = brandsData.map((brand: ApiBrand) => ({
+    id: brand.brand_id,
+    name: brand.name,
+    logo: brand.logo || '/GC360 Marginless.png', // Fallback logo path
+    productImage: `/brands/${brand.slug}-product.png`, // Fallback product image
+    tagline: brand.description || `${brand.name} Products`,
+    slug: brand.slug,
+    keywords: [brand.name.toLowerCase(), brand.slug.toLowerCase()],
+    categories: brand.category_ids?.map(catId =>
+      categoriesData.find(cat => cat.category_id === catId)?.name
+    ).filter(Boolean) as string[] || [],
+  }));
+
+  return {
+    brands,
+    isLoading: brandsLoading || categoriesLoading,
+    categories: categoriesData,
+  };
+};
+
+// Legacy static brands array for backward compatibility (deprecated - use useDynamicBrands instead)
 export const brands: Brand[] = [
   {
     id: '1',
     name: 'CeraVe',
-    logo: '/brands/cerave-logo.png',
+    logo: '/GC360 Marginless.png',
     productImage: '/brands/cerave-product.png',
     tagline: 'Developed with Dermatologists',
     slug: 'cerave',
     keywords: ['cerave', 'cera ve'],
+    categories: ['Skincare'],
   },
   {
     id: '2',
     name: 'Neutrogena',
-    logo: '/brands/neutrogena-logo.png',
+    logo: '/GC360 Marginless.png',
     productImage: '/brands/neutrogena-product.png',
     tagline: 'Dermatologist Recommended',
     discount: 'Upto 25% Off',
     slug: 'neutrogena',
     keywords: ['neutrogena'],
+    categories: ['Skincare'],
   },
   {
     id: '3',
@@ -41,6 +76,7 @@ export const brands: Brand[] = [
     tagline: 'Skincare You Can Trust',
     slug: 'nivea',
     keywords: ['nivea'],
+    categories: ['Skincare', 'Body Care'],
   },
   {
     id: '4',
@@ -50,6 +86,7 @@ export const brands: Brand[] = [
     tagline: 'Sensitive Skin Experts',
     slug: 'la-roche-posay',
     keywords: ['la roche', 'laroche', 'roche-posay', 'roche posay'],
+    categories: ['Skincare'],
   },
   {
     id: '5',
@@ -60,6 +97,7 @@ export const brands: Brand[] = [
     discount: 'Upto 30% Off',
     slug: 'the-ordinary',
     keywords: ['the ordinary', 'ordinary'],
+    categories: ['Skincare'],
   },
   {
     id: '6',
@@ -69,6 +107,7 @@ export const brands: Brand[] = [
     tagline: 'Biology at the Service of Skin',
     slug: 'bioderma',
     keywords: ['bioderma'],
+    categories: ['Skincare'],
   },
   {
     id: '7',
@@ -78,6 +117,7 @@ export const brands: Brand[] = [
     tagline: 'Medical Skincare',
     slug: 'eucerin',
     keywords: ['eucerin'],
+    categories: ['Skincare'],
   },
   {
     id: '8',
@@ -87,6 +127,7 @@ export const brands: Brand[] = [
     tagline: 'Real Beauty, Real Care',
     slug: 'dove',
     keywords: ['dove'],
+    categories: ['Body Care', 'Haircare'],
   },
   {
     id: '9',
@@ -96,6 +137,7 @@ export const brands: Brand[] = [
     tagline: 'Ageless Beauty',
     slug: 'olay',
     keywords: ['olay'],
+    categories: ['Skincare'],
   },
   {
     id: '10',
@@ -105,6 +147,7 @@ export const brands: Brand[] = [
     tagline: 'Take Care',
     slug: 'garnier',
     keywords: ['garnier'],
+    categories: ['Skincare', 'Haircare'],
   },
   {
     id: '11',
@@ -114,6 +157,7 @@ export const brands: Brand[] = [
     tagline: "Because You're Worth It",
     slug: 'loreal',
     keywords: ['loreal', "l'oreal", 'l oreal'],
+    categories: ['Skincare', 'Haircare', 'Makeup'],
   },
   {
     id: '12',
@@ -123,22 +167,23 @@ export const brands: Brand[] = [
     tagline: 'Maybe She\'s Born With It',
     slug: 'maybelline',
     keywords: ['maybelline'],
+    categories: ['Makeup'],
   },
 ];
 
-// Get brand names for filter options
+// Get brand names for filter options (legacy - use useDynamicBrands instead)
 export const getBrandNames = (): string[] => {
   return brands.map(brand => brand.name);
 };
 
-// Find brand by name (case insensitive)
+// Find brand by name (case insensitive) (legacy - use useDynamicBrands instead)
 export const findBrandByName = (name: string): Brand | undefined => {
   return brands.find(
     brand => brand.name.toLowerCase() === name.toLowerCase()
   );
 };
 
-// Check if product matches brand
+// Check if product matches brand (legacy - use useDynamicBrands instead)
 export const productMatchesBrand = (productName: string, brandName: string): boolean => {
   const brand = findBrandByName(brandName);
   if (!brand) return false;

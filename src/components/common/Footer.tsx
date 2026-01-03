@@ -90,15 +90,11 @@ const Footer: React.FC = () => {
           {/* Logo & Description */}
           <div className="col-span-2 md:col-span-3 lg:col-span-1">
             <Link to="/" className="inline-block mb-4">
-              <div className="flex flex-col">
-                <span className="text-2xl font-bold" style={{ color: '#0B0B0B' }}>
-                  <span className="font-serif italic">Glowcare</span>
-                  <span style={{ color: '#C9A24D' }}>360</span>
-                </span>
-                <span className="text-xs" style={{ color: '#6B7280' }}>
-                  Your Trusted Beauty Partner
-                </span>
-              </div>
+              <img
+                src="/GC360 Marginless.png"
+                alt="Glowcare360 Logo"
+                className="w-[200px] h-auto"
+              />
             </Link>
             <p className="text-sm mb-4" style={{ color: '#6B7280' }}>
               Premium skincare & beauty products delivered to your doorstep.

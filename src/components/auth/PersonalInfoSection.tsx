@@ -4,6 +4,7 @@ import { Camera, Edit2, Trash2 } from 'lucide-react';
 import { useAppSelector, useAppDispatch } from '../../store';
 import { logout } from '../../store/slices/authSlice';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../../config/api';
 
 // Types for backend integration
 interface UserProfile {
@@ -59,9 +60,6 @@ const PersonalInfoSection: React.FC = () => {
     height_cm: '',
     weight_kg: ''
   });
-
-  // Configuration
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
 
   const getAuthToken = () => {
     return localStorage.getItem('access_token');

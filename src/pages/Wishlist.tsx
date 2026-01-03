@@ -9,6 +9,7 @@ import { useAppSelector } from '../store';
 import Button from '../components/common/Button';
 import Loading from '../components/common/Loading';
 import Toast from '../components/ui/Toast';
+import { getImageUrl } from '../config/api';
 
 const Wishlist: React.FC = () => {
   const navigate = useNavigate();
@@ -119,17 +120,6 @@ const Wishlist: React.FC = () => {
     setTimeout(() => {
       navigate('/login');
     }, 2000);
-  };
-
-  // FIXED: Proper image URL handling
-  const getImageUrl = (imageUrl?: string) => {
-    if (!imageUrl) return null;
-    
-    if (imageUrl.startsWith('http')) {
-      return imageUrl;
-    }
-    
-    return `${process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000'}${imageUrl}`;
   };
 
   // FIXED: Proper category name extraction

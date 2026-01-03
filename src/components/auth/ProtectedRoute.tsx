@@ -3,23 +3,21 @@ import React, { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
+import { API_BASE_URL } from '../../config/api';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
   requireProfile?: boolean; // Optional flag to require profile completion
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
-  children, 
-  requireProfile = false 
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+  children,
+  requireProfile = false
 }) => {
   const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
   const location = useLocation();
   const [isChecking, setIsChecking] = useState(requireProfile);
   const [profileExists, setProfileExists] = useState(false);
-
-  // Configuration
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
 
   const getAuthToken = () => {
     return localStorage.getItem('access_token');

@@ -1,7 +1,6 @@
 // store/api/apiSlice.ts (Fixed)
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000/api';
+import { API_BASE_URL } from '../../config/api';
 
 export const apiSlice = createApi({
   reducerPath: 'api',
@@ -29,7 +28,7 @@ export const apiSlice = createApi({
       query: (id) => `products/${id}/`,
       providesTags: (result, error, id) => [{ type: 'Product', id }],
     }),
-    
+
     // Orders
     getOrders: builder.query({
       query: () => 'orders/',
@@ -43,7 +42,7 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ['Order'],
     }),
-    
+
     // Auth
     login: builder.mutation({
       query: (credentials) => ({

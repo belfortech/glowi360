@@ -1,13 +1,28 @@
-// src/config/api.ts - UPDATED VERSION WITH DETAILED LOGGING
+// src/config/api.ts - CENTRALIZED API CONFIGURATION
 import axios from 'axios';
 
-// Make sure this matches your Django setup
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://api.glowcare360.com/user/';
-// const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000/api';
+// ============================================
+// CENTRALIZED API CONFIGURATION
+// ============================================
+// All API URLs should be imported from this file
+// Do NOT define API_BASE_URL anywhere else in the project
+
+// Main API base URL for user/auth endpoints
+export const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://api.glowcare360.com/user/';
+
+// Media/static files base URL (for images, etc.)
+export const MEDIA_BASE_URL = process.env.REACT_APP_MEDIA_BASE_URL || 'http://api.glowcare360.com';
+
+// Helper function to get full image URL
+export const getImageUrl = (imageUrl: string | undefined | null): string => {
+  if (!imageUrl) return '/api/placeholder/400/400';
+  if (imageUrl.startsWith('http')) return imageUrl;
+  return `${MEDIA_BASE_URL}${imageUrl}`;
+};
 
 console.log('🔵 API Config - Base URL:', API_BASE_URL);
+console.log('🔵 API Config - Media URL:', MEDIA_BASE_URL);
 console.log('🔵 API Config - Environment:', process.env.NODE_ENV);
-console.log('🔵 API Config - REACT_APP_API_BASE_URL:', process.env.REACT_APP_API_BASE_URL);
 
 export const api = axios.create({
   baseURL: API_BASE_URL,

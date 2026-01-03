@@ -14,6 +14,7 @@ import {
   updatePrescription,
   Prescription,
 } from '../store/slices/prescriptionSlice';
+import { API_BASE_URL } from '../config/api';
 
 interface UploadPrescriptionData {
   prescription_file: File;
@@ -26,8 +27,6 @@ export const usePrescriptionApi = () => {
     (state) => state.prescription
   );
 
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
-
   const getAuthToken = () => {
     return localStorage.getItem('access_token');
   };
@@ -39,7 +38,7 @@ export const usePrescriptionApi = () => {
       dispatch(clearMessages());
       const token = getAuthToken();
 
-      const response = await fetch(`${API_BASE_URL}/api/prescriptions/`, {
+      const response = await fetch(`${API_BASE_URL}prescriptions/`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -68,7 +67,7 @@ export const usePrescriptionApi = () => {
       dispatch(clearMessages());
       const token = getAuthToken();
 
-      const response = await fetch(`${API_BASE_URL}/api/prescriptions/active/`, {
+      const response = await fetch(`${API_BASE_URL}prescriptions/active/`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -97,7 +96,7 @@ export const usePrescriptionApi = () => {
       dispatch(clearMessages());
       const token = getAuthToken();
 
-      const response = await fetch(`${API_BASE_URL}/api/prescriptions/expired/`, {
+      const response = await fetch(`${API_BASE_URL}prescriptions/expired/`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -132,7 +131,7 @@ export const usePrescriptionApi = () => {
         formData.append('expiry_date', prescriptionData.expiry_date);
       }
 
-      const response = await fetch(`${API_BASE_URL}/api/prescriptions/`, {
+      const response = await fetch(`${API_BASE_URL}prescriptions/`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -165,7 +164,7 @@ export const usePrescriptionApi = () => {
       dispatch(clearMessages());
       const token = getAuthToken();
 
-      const response = await fetch(`${API_BASE_URL}/api/prescriptions/${prescriptionId}/`, {
+      const response = await fetch(`${API_BASE_URL}prescriptions/${prescriptionId}/`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -192,7 +191,7 @@ export const usePrescriptionApi = () => {
     try {
       const token = getAuthToken();
 
-      const response = await fetch(`${API_BASE_URL}/api/prescriptions/${prescriptionId}/download/`, {
+      const response = await fetch(`${API_BASE_URL}prescriptions/${prescriptionId}/download/`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },

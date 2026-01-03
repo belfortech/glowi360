@@ -1,12 +1,12 @@
 // pages/ProductDetail.tsx - FIXED VERSION WITH INLINE STYLES
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { 
-  Star, 
-  ShoppingCart, 
-  Heart, 
-  ArrowLeft, 
-  Plus, 
+import {
+  Star,
+  ShoppingCart,
+  Heart,
+  ArrowLeft,
+  Plus,
   Minus,
   Truck,
   Shield,
@@ -24,6 +24,7 @@ import Button from '../components/common/Button';
 import Loading from '../components/common/Loading';
 import Toast from '../components/ui/Toast';
 import ProductGrid from '../components/products/ProductGrid';
+import { getImageUrl } from '../config/api';
 
 const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -132,16 +133,6 @@ const ProductDetail: React.FC = () => {
       month: '2-digit',
       year: 'numeric'
     });
-  };
-
-  const getImageUrl = (imageUrl?: string) => {
-    if (!imageUrl) return null;
-    
-    if (imageUrl.startsWith('http')) {
-      return imageUrl;
-    }
-    
-    return `${process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000'}${imageUrl}`;
   };
 
   const handleImageError = () => {

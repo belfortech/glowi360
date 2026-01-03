@@ -2,16 +2,18 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { api } from '../config/api';
-import { 
-  User, 
-  Product, 
+import { useAppSelector } from '../store';
+import {
+  User,
+  Product,
   ProductListItem,
-  Category, 
-  Cart, 
-  CartItem, 
-  Address, 
-  DeliveryOption, 
-  Order 
+  Category,
+  Brand,
+  Cart,
+  CartItem,
+  Address,
+  DeliveryOption,
+  Order
 } from '../types/api';
 import {
   getLocalCart,
@@ -39,7 +41,7 @@ interface PaginatedResponse<T> {
 // Auth API calls
 export const useLogin = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (credentials: { email: string; password: string }) => {
       const response = await api.post('/login/', credentials);
@@ -75,7 +77,7 @@ export const useLogin = () => {
         // Invalidate cart and wishlist queries to refetch from backend
         queryClient.invalidateQueries({ queryKey: ['cart'] });
         queryClient.invalidateQueries({ queryKey: ['wishlist'] });
-        
+
         console.log('✅ Login successful and local data synced to backend');
       } catch (error) {
         console.error('❌ Error syncing local data to backend:', error);
@@ -107,19 +109,19 @@ export const useCategories = () => {
     queryFn: async (): Promise<Category[]> => {
       console.log('🔍 API CALL: Starting /categories/ request');
       const response = await api.get('/categories/');
-      
+
       console.log('🔍 API RESPONSE: Full response object:', response);
       console.log('🔍 API RESPONSE: response.data:', response.data);
       console.log('🔍 API RESPONSE: typeof response.data:', typeof response.data);
       console.log('🔍 API RESPONSE: Array.isArray(response.data):', Array.isArray(response.data));
-      
+
       if (response.data && typeof response.data === 'object') {
         console.log('🔍 API RESPONSE: Object keys:', Object.keys(response.data));
         console.log('🔍 API RESPONSE: Has "results" property:', 'results' in response.data);
         console.log('🔍 API RESPONSE: Has "count" property:', 'count' in response.data);
         console.log('🔍 API RESPONSE: Has "next" property:', 'next' in response.data);
       }
-      
+
       // Check if response is paginated
       if (response.data && typeof response.data === 'object' && 'results' in response.data) {
         console.log('🔍 API RESPONSE: PAGINATED - Processing results');
@@ -128,7 +130,7 @@ export const useCategories = () => {
         console.log('🔍 API RESPONSE: paginatedData.results length:', paginatedData.results?.length);
         return Array.isArray(paginatedData.results) ? paginatedData.results : [];
       }
-      
+
       // Handle direct array response
       console.log('🔍 API RESPONSE: DIRECT ARRAY - Processing as array');
       console.log('🔍 API RESPONSE: Final return value:', Array.isArray(response.data) ? response.data : []);
@@ -144,8 +146,49 @@ export const useCategories = () => {
   });
 };
 
+// Brands - Public data, always available
+export const useBrands = () => {
+  return useQuery({
+    queryKey: ['brands'],
+    queryFn: async (): Promise<Brand[]> => {
+      console.log('🔍 API CALL: Starting /brands/ request');
+      const response = await api.get('/brands/');
 
+      console.log('🔍 API RESPONSE: Full response object:', response);
+      console.log('🔍 API RESPONSE: response.data:', response.data);
+      console.log('🔍 API RESPONSE: typeof response.data:', typeof response.data);
+      console.log('🔍 API RESPONSE: Array.isArray(response.data):', Array.isArray(response.data));
 
+      if (response.data && typeof response.data === 'object') {
+        console.log('🔍 API RESPONSE: Object keys:', Object.keys(response.data));
+        console.log('🔍 API RESPONSE: Has "results" property:', 'results' in response.data);
+        console.log('🔍 API RESPONSE: Has "count" property:', 'count' in response.data);
+        console.log('🔍 API RESPONSE: Has "next" property:', 'next' in response.data);
+      }
+
+      // Check if response is paginated
+      if (response.data && typeof response.data === 'object' && 'results' in response.data) {
+        console.log('🔍 API RESPONSE: PAGINATED - Processing results');
+        const paginatedData = response.data as PaginatedResponse<Brand>;
+        console.log('🔍 API RESPONSE: paginatedData.results:', paginatedData.results);
+        console.log('🔍 API RESPONSE: paginatedData.results length:', paginatedData.results?.length);
+        return Array.isArray(paginatedData.results) ? paginatedData.results : [];
+      }
+
+      // Handle direct array response
+      console.log('🔍 API RESPONSE: DIRECT ARRAY - Processing as array');
+      console.log('🔍 API RESPONSE: Final return value:', Array.isArray(response.data) ? response.data : []);
+      return Array.isArray(response.data) ? response.data : [];
+    },
+    enabled: true,           // Force enable
+    retry: 1,               // Allow retry
+    refetchOnMount: true,   // Force refetch when component mounts
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    staleTime: 0,           // No cache - always fresh
+    gcTime: 5 * 60 * 1000,  // 5 minutes garbage collection
+  });
+};
 
 // Products - ALL PRODUCTS API - SEPARATE QUERY KEY
 export const useProducts = (params?: {
@@ -158,20 +201,20 @@ export const useProducts = (params?: {
     queryFn: async (): Promise<ProductListItem[]> => {
       try {
         const response = await api.get('/products/');
-        
+
         console.log('🌐 API Response:', response.data);
-        
+
         // Check if response is paginated
         if (response.data && typeof response.data === 'object' && 'results' in response.data) {
           const paginatedData = response.data as PaginatedResponse<ProductListItem>;
           console.log('📄 Paginated response, products count:', paginatedData.results?.length);
           return Array.isArray(paginatedData.results) ? paginatedData.results : [];
         }
-        
+
         // Handle direct array response
         console.log('📄 Direct array response, products count:', response.data?.length);
         return Array.isArray(response.data) ? response.data : [];
-        
+
       } catch (error: any) {
         console.error('🔴 useProducts - API Error:', error);
         throw error;
@@ -194,16 +237,16 @@ export const useFeaturedProducts = () => {
     queryFn: async (): Promise<ProductListItem[]> => {
       try {
         const response = await api.get('/products/featured/');
-        
+
         // Check if response is paginated
         if (response.data && typeof response.data === 'object' && 'results' in response.data) {
           const paginatedData = response.data as PaginatedResponse<ProductListItem>;
           return Array.isArray(paginatedData.results) ? paginatedData.results : [];
         }
-        
+
         // Handle direct array response
         return Array.isArray(response.data) ? response.data : [];
-        
+
       } catch (error: any) {
         console.error('🔴 useFeaturedProducts - API Error:', error);
         throw error;
@@ -239,10 +282,11 @@ export const useProduct = (productId: string) => {
 
 // Cart - Works for both authenticated and guest users
 export const useCart = () => {
-  const isAuthenticated = !!localStorage.getItem('access_token');
-  
+  // Use reactive auth state from Redux store
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
+
   return useQuery({
-    queryKey: ['cart'],
+    queryKey: ['cart', isAuthenticated], // Include auth state in key for proper cache separation
     queryFn: async (): Promise<Cart> => {
       if (isAuthenticated) {
         const response = await api.get('/cart/');
@@ -251,7 +295,7 @@ export const useCart = () => {
         // Return local cart data for guest users
         const localCart = getLocalCart();
         const localCartCount = getLocalCartCount();
-        
+
         return {
           cart_id: 'local-cart',
           items: [], // We'll populate this with product details in the UI
@@ -262,7 +306,7 @@ export const useCart = () => {
     },
     enabled: true,
     retry: 1,
-    refetchOnMount: false,
+    refetchOnMount: true, // Refetch when component mounts to get fresh data
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
@@ -270,8 +314,8 @@ export const useCart = () => {
 
 export const useAddToCart = () => {
   const queryClient = useQueryClient();
-  const isAuthenticated = !!localStorage.getItem('access_token');
-  
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
+
   return useMutation({
     mutationFn: async (data: { product_id: string; quantity: number }) => {
       if (isAuthenticated) {
@@ -284,6 +328,7 @@ export const useAddToCart = () => {
       }
     },
     onSuccess: () => {
+      // Invalidate both possible cache keys
       queryClient.invalidateQueries({ queryKey: ['cart'] });
     },
     onError: (error) => {
@@ -294,8 +339,8 @@ export const useAddToCart = () => {
 
 export const useUpdateCartItem = () => {
   const queryClient = useQueryClient();
-  const isAuthenticated = !!localStorage.getItem('access_token');
-  
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
+
   return useMutation({
     mutationFn: async ({ itemId, quantity }: { itemId: string; quantity: number }) => {
       if (isAuthenticated) {
@@ -315,8 +360,8 @@ export const useUpdateCartItem = () => {
 
 export const useRemoveFromCart = () => {
   const queryClient = useQueryClient();
-  const isAuthenticated = !!localStorage.getItem('access_token');
-  
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
+
   return useMutation({
     mutationFn: async (itemId: string) => {
       if (isAuthenticated) {
@@ -336,10 +381,11 @@ export const useRemoveFromCart = () => {
 
 // Wishlist - Works for both authenticated and guest users
 export const useWishlist = () => {
-  const isAuthenticated = !!localStorage.getItem('access_token');
-  
+  // Use reactive auth state from Redux store
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
+
   return useQuery({
-    queryKey: ['wishlist'],
+    queryKey: ['wishlist', isAuthenticated], // Include auth state in key for proper cache separation
     queryFn: async () => {
       if (isAuthenticated) {
         const response = await api.get('/wishlist/');
@@ -348,7 +394,7 @@ export const useWishlist = () => {
         // Return local wishlist data for guest users
         const localWishlist = getLocalWishlist();
         const localWishlistCount = getLocalWishlistCount();
-        
+
         return {
           wishlist_id: 'local-wishlist',
           products: [], // We'll populate this with product details in the UI
@@ -358,7 +404,7 @@ export const useWishlist = () => {
     },
     enabled: true,
     retry: 1,
-    refetchOnMount: false,
+    refetchOnMount: true, // Refetch when component mounts to get fresh data
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
@@ -366,8 +412,8 @@ export const useWishlist = () => {
 
 export const useAddToWishlist = () => {
   const queryClient = useQueryClient();
-  const isAuthenticated = !!localStorage.getItem('access_token');
-  
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
+
   return useMutation({
     mutationFn: async (productId: string) => {
       if (isAuthenticated) {
@@ -387,8 +433,8 @@ export const useAddToWishlist = () => {
 
 export const useRemoveFromWishlist = () => {
   const queryClient = useQueryClient();
-  const isAuthenticated = !!localStorage.getItem('access_token');
-  
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
+
   return useMutation({
     mutationFn: async (productId: string) => {
       if (isAuthenticated) {
@@ -409,8 +455,8 @@ export const useRemoveFromWishlist = () => {
 // Helper hook to get wishlist status for a product
 export const useIsWishlisted = (productId: string) => {
   const { data: wishlist } = useWishlist();
-  const isAuthenticated = !!localStorage.getItem('access_token');
-  
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
+
   return useMemo(() => {
     if (isAuthenticated) {
       return wishlist?.products?.some((p: any) => p.product_id === productId) || false;
@@ -423,8 +469,8 @@ export const useIsWishlisted = (productId: string) => {
 // Helper hook to get cart count
 export const useCartCount = () => {
   const { data: cart } = useCart();
-  const isAuthenticated = !!localStorage.getItem('access_token');
-  
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
+
   return useMemo(() => {
     if (isAuthenticated) {
       return cart?.total_items || 0;
@@ -437,8 +483,8 @@ export const useCartCount = () => {
 // Helper hook to get wishlist count
 export const useWishlistCount = () => {
   const { data: wishlist } = useWishlist();
-  const isAuthenticated = !!localStorage.getItem('access_token');
-  
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
+
   return useMemo(() => {
     if (isAuthenticated) {
       return wishlist?.products?.length || 0;
@@ -451,24 +497,24 @@ export const useWishlistCount = () => {
 // Rest of the existing hooks remain the same...
 // Addresses - Only fetch if user is authenticated
 export const useAddresses = () => {
-  const isAuthenticated = !!localStorage.getItem('access_token');
-  
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
+
   return useQuery({
-    queryKey: ['addresses'],
+    queryKey: ['addresses', isAuthenticated],
     queryFn: async (): Promise<Address[]> => {
       const response = await api.get('/addresses/');
-      
+
       // Check if response is paginated
       if (response.data && typeof response.data === 'object' && 'results' in response.data) {
         const paginatedData = response.data as PaginatedResponse<Address>;
         return Array.isArray(paginatedData.results) ? paginatedData.results : [];
       }
-      
+
       return Array.isArray(response.data) ? response.data : [];
     },
     enabled: isAuthenticated,
     initialData: [],
-    refetchOnMount: false,
+    refetchOnMount: true,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
@@ -476,7 +522,7 @@ export const useAddresses = () => {
 
 export const useCreateAddress = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (addressData: Omit<Address, 'address_id'>) => {
       const response = await api.post('/addresses/', addressData);
@@ -490,7 +536,7 @@ export const useCreateAddress = () => {
 
 export const useUpdateAddress = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async ({ addressId, data }: { addressId: string; data: Partial<Address> }) => {
       const response = await api.put(`/addresses/${addressId}/`, data);
@@ -504,7 +550,7 @@ export const useUpdateAddress = () => {
 
 export const useDeleteAddress = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (addressId: string) => {
       const response = await api.delete(`/addresses/${addressId}/`);
@@ -518,7 +564,7 @@ export const useDeleteAddress = () => {
 
 export const useSetDefaultAddress = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (addressId: string) => {
       const response = await api.post(`/addresses/${addressId}/set-default/`);
@@ -536,13 +582,13 @@ export const useDeliveryOptions = () => {
     queryKey: ['delivery-options'],
     queryFn: async (): Promise<DeliveryOption[]> => {
       const response = await api.get('/delivery-options/');
-      
+
       // Check if response is paginated
       if (response.data && typeof response.data === 'object' && 'results' in response.data) {
         const paginatedData = response.data as PaginatedResponse<DeliveryOption>;
         return Array.isArray(paginatedData.results) ? paginatedData.results : [];
       }
-      
+
       return Array.isArray(response.data) ? response.data : [];
     },
     initialData: [],
@@ -555,40 +601,40 @@ export const useDeliveryOptions = () => {
 
 // Orders - Only fetch if user is authenticated
 export const useOrders = () => {
-  const isAuthenticated = !!localStorage.getItem('access_token');
-  
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
+
   return useQuery({
-    queryKey: ['orders'],
+    queryKey: ['orders', isAuthenticated],
     queryFn: async (): Promise<Order[]> => {
       const response = await api.get('/orders/');
-      
+
       // Check if response is paginated
       if (response.data && typeof response.data === 'object' && 'results' in response.data) {
         const paginatedData = response.data as PaginatedResponse<Order>;
         return Array.isArray(paginatedData.results) ? paginatedData.results : [];
       }
-      
+
       return Array.isArray(response.data) ? response.data : [];
     },
     enabled: isAuthenticated,
     initialData: [],
-    refetchOnMount: false,
+    refetchOnMount: true,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
 };
 
 export const useOrder = (orderId: string) => {
-  const isAuthenticated = !!localStorage.getItem('access_token');
-  
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
+
   return useQuery({
-    queryKey: ['order', orderId],
+    queryKey: ['order', orderId, isAuthenticated],
     queryFn: async (): Promise<Order> => {
       const response = await api.get(`/orders/${orderId}/`);
       return response.data;
     },
     enabled: !!orderId && isAuthenticated,
-    refetchOnMount: false,
+    refetchOnMount: true,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
@@ -596,7 +642,7 @@ export const useOrder = (orderId: string) => {
 
 export const useCreateOrder = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (orderData: {
       address_id: string;
@@ -615,17 +661,17 @@ export const useCreateOrder = () => {
 
 // Checkout Summary - Only fetch if user is authenticated
 export const useCheckoutSummary = () => {
-  const isAuthenticated = !!localStorage.getItem('access_token');
-  
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
+
   return useQuery({
-    queryKey: ['checkout-summary'],
+    queryKey: ['checkout-summary', isAuthenticated],
     queryFn: async () => {
       const response = await api.get('/checkout/summary/');
       return response.data;
     },
     enabled: isAuthenticated,
     retry: 1,
-    refetchOnMount: false,
+    refetchOnMount: true,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
@@ -633,7 +679,7 @@ export const useCheckoutSummary = () => {
 
 export const useCancelOrder = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (orderId: string) => {
       const response = await api.post(`/orders/${orderId}/cancel/`);

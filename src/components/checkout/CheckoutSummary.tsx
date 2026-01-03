@@ -4,6 +4,7 @@ import { Package, CreditCard, CheckCircle, AlertCircle, Clock } from 'lucide-rea
 import { CartItem, DeliveryOption } from '../../types/api';
 import Button from '../common/Button';
 import Loading from '../common/Loading';
+import { getImageUrl } from '../../config/api';
 
 interface CheckoutSummaryProps {
   cartItems: CartItem[];
@@ -45,13 +46,7 @@ const CheckoutSummary: React.FC<CheckoutSummaryProps> = ({
           return (
             <div key={item.cart_item_id} className="flex items-center gap-3 p-2 border border-gray-100 rounded">
               <img
-                src={item.product.image ? 
-                  (item.product.image.startsWith('http') ? 
-                    item.product.image : 
-                    `${process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000'}${item.product.image}`
-                  ) : 
-                  '/api/placeholder/50/50'
-                }
+                src={getImageUrl(item.product.image)}
                 alt={item.product.name}
                 className="w-12 h-12 rounded-lg object-cover"
                 onError={(e) => {

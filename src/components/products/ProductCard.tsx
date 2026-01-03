@@ -5,6 +5,7 @@ import { ProductListItem, parsePrice, parseRating } from '../../types/api';
 import { useAddToCart } from '../../hooks/api';
 import { useAppSelector } from '../../store';
 import Toast from '../ui/Toast';
+import { getImageUrl } from '../../config/api';
 
 interface ProductCardProps {
   product: ProductListItem;
@@ -81,20 +82,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     window.location.href = `/products/${product.product_id}`;
   };
 
-  // FIXED: Proper image URL handling
-  const getImageUrl = () => {
-    if (product.image) {
-      // If it's a full URL, use it as is
-      if (product.image.startsWith('http')) {
-        return product.image;
-      }
-      // If it's a relative path, prepend the API base URL
-      return `${process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000'}${product.image}`;
-    }
-    // Return null if no image - we'll handle this in the component
-    return null;
-  };
-
   const handleImageError = () => {
     setImageError(true);
   };
@@ -119,9 +106,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           }}
         >
           {/* FIXED: Proper image handling with fallback */}
-          {!imageError && getImageUrl() ? (
+          {!imageError && product.image ? (
             <img
-              src={getImageUrl()!}
+              src={getImageUrl(product.image)}
               alt={product.name}
               className="w-full h-full object-cover"
               onError={handleImageError}
